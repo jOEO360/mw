@@ -1,0 +1,21 @@
+name: Build FatBass
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DFATBASS_UNIVERSAL=ON -DFATBASS_COPY=OFF
+      - name: Build
+        run: cmake --build build --config Release --parallel
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FatBass-${{ matrix.os }}
+          path: build/FatBass_artefacts/Release/**
